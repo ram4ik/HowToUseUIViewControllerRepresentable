@@ -10,11 +10,20 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var showScreen: Bool = false
+    
     @State private var pickerScreen: Bool = false
+    @State private var image: UIImage? = nil
     
     var body: some View {
         VStack {
             Text("Hi")
+            
+            if let image = image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200, alignment: .center)
+            }
             
             Button {
                 showScreen.toggle()
@@ -31,7 +40,7 @@ struct ContentView: View {
                 Text("Picker")
             }
             .sheet(isPresented: $pickerScreen) {
-                UIImagePickerControllerRepresentable()
+                UIImagePickerControllerRepresentable(image: $image)
             }
 
         }
@@ -46,15 +55,38 @@ struct ContentView_Previews: PreviewProvider {
 
 struct UIImagePickerControllerRepresentable: UIViewControllerRepresentable {
     
+    @Binding var image: UIImage?
+    
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let vc = UIImagePickerController()
         vc.allowsEditing = false
-        
+        vc.delegate = context.coordinator
         return vc
     }
     
+    // from SwiftUI to UIKit
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
         
+    }
+    
+    // from UIKit to SwiftUI
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(image: $image)
+    }
+    
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        
+        @Binding var image: UIImage?
+        
+        init(image: Binding<UIImage?>) {
+            self._image = image
+        }
+        
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            
+            guard let newImage = info[.originalImage] as? UIImage else { return }
+            image = newImage
+        }
     }
 }
 
