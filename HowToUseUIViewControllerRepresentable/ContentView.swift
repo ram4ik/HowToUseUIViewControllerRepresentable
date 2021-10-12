@@ -40,7 +40,9 @@ struct BasicUIViewControllerRepresentable: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> some UIViewController {
         
-        return MyFirstViewController()
+        let vc = MyFirstViewController()
+        vc.labelText = labelText
+        return vc
     }
     
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
