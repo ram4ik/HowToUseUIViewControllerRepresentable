@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var showScreen: Bool = false
+    @State private var pickerScreen: Bool = false
     
     var body: some View {
         VStack {
@@ -23,6 +24,15 @@ struct ContentView: View {
             .sheet(isPresented: $showScreen) {
                 BasicUIViewControllerRepresentable(labelText: "New text here...")
             }
+            
+            Button {
+                pickerScreen.toggle()
+            } label: {
+                Text("Picker")
+            }
+            .sheet(isPresented: $pickerScreen) {
+                UIImagePickerControllerRepresentable()
+            }
 
         }
     }
@@ -31,6 +41,20 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+struct UIImagePickerControllerRepresentable: UIViewControllerRepresentable {
+    
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let vc = UIImagePickerController()
+        vc.allowsEditing = false
+        
+        return vc
+    }
+    
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
+        
     }
 }
 
